@@ -23,28 +23,20 @@ class SensorsApp extends StatefulWidget {
 
 class _SensorsAppState extends State<SensorsApp> {
   void getInformationAcelerometer(eventData) {
-    /*
-    String flag;
-    if (eventData.z < 20) {
-      flag = "funciona";
-    } else {
-      flag = "Que extraño";
-    }*/
     setState(() {
       _accelerometerValues = <double>[eventData.x, eventData.y, eventData.z];
-      //_check = flag;
+      _check = true;
     });
   }
 
-  //String _check = "No funciona";
+  bool _check = false;
   List<double>? _accelerometerValues;
 
   @override
   Widget build(BuildContext context) {
     final accelerometer =
         _accelerometerValues?.map((double v) => v.toStringAsFixed(1)).toList();
-
-    //final flag = _check;
+    final flag = _check;
     return Scaffold(
       appBar: AppBar(
         title: Text("User Accelerometer data prototype"),
@@ -71,12 +63,18 @@ class _SensorsAppState extends State<SensorsApp> {
             SizedBox(
               height: 18.0,
             ),
-            Text("x: " +
-                accelerometer!.elementAt(0) +
-                "     y: " +
-                accelerometer.elementAt(1) +
-                "     z: " +
-                accelerometer.elementAt(2)),
+            Text((() {
+              if (flag) {
+                return "x: " +
+                    accelerometer!.elementAt(0) +
+                    " y: " +
+                    accelerometer.elementAt(1) +
+                    " z: " +
+                    accelerometer.elementAt(2);
+              } else {
+                return '';
+              }
+            }())),
           ],
         ),
       ),
