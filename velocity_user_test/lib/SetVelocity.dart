@@ -74,7 +74,8 @@ class _SetVelocityState extends State<SetVelocity> {
                   );
                 },
                 min: 0,
-                max: 240,
+                max: 10,
+                divisions: 10,
                 value: minVel,
                 label: minVel.toString(),
               ),

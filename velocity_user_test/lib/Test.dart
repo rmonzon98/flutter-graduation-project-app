@@ -1,7 +1,6 @@
 import 'dart:async';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:velocity_user_test/Arguments.dart';
 import 'package:velocity_user_test/SpeedGUI.dart';
 
@@ -19,6 +18,19 @@ class _TestState extends State<Test> {
   var maxVal;
   var minVal;
   var timeInterval;
+
+  Future sendData() async {
+    Map data = {
+      'intervalo': timeInterval.toString(),
+      'minimo': minVal.toString(),
+      'maximo': maxVal.toString(),
+    };
+    // ignore: unused_local_variable
+    var response = await http.post(
+      Uri.parse('http://143.208.181.113/graduacion/guardar_datos_encuesta.php'),
+      body: data,
+    );
+  }
 
   void addSecond() {
     setState(
@@ -100,16 +112,19 @@ class _TestState extends State<Test> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as ArgumentsClass;
     maxVal = args.maxVel;
+    // ignore: unnecessary_null_comparison
     if (args.maxVel != null) {
       maxVal = args.maxVel;
     } else {
       maxVal = 0;
     }
+    // ignore: unnecessary_null_comparison
     if (args.minVel != null) {
       minVal = args.minVel;
     } else {
       minVal = 0;
     }
+    // ignore: unnecessary_null_comparison
     if (args.timeInterval != null) {
       timeInterval = args.timeInterval;
     } else {
@@ -179,6 +194,34 @@ class _TestState extends State<Test> {
                 max: 240,
                 value: velocity,
                 label: velocity.toString(),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      sendData();
+                    },
+                    child: Text(
+                      'guardar',
+                    ),
+                  ),
+                  SizedBox(
+                    width: 30,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Finalizar',
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

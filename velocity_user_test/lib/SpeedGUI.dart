@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class SpeedUI extends StatelessWidget {
