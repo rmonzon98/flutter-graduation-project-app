@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sizer/sizer.dart';
 import 'package:automated_data_storage/Providers/DataSender.dart';
@@ -13,50 +13,71 @@ class AccelerometerTracker extends StatefulWidget {
 }
 
 class _AccelerometerTrackerState extends State<AccelerometerTracker> {
-  double maxForce = 15.0; // Valor máximo permitido en todos los ejes
+  double maxForce = 40.0; // Valor máximo permitido en todos los ejes
   late StreamSubscription _accStream;
-  bool _check = false;
   List<double> _accelerometerValues = [0, 0, 0];
   List<double> _accelerometerValuesCrash = [0, 0, 0];
+  var lastEvent;
 
   void getInformationAcelerometer(eventData) {
-    bool posibleCrash = false;
+    lastEvent = DateTime.now().millisecondsSinceEpoch;
     if (eventData.x > maxForce ||
         eventData.y > maxForce ||
         eventData.z > maxForce) {
-      posibleCrash = true;
       _accStream.cancel();
+      _sendData();
       _accelerometerValuesCrash = [eventData.x, eventData.y, eventData.z];
     }
-    setState(() {
-      _accelerometerValues = <double>[eventData.x, eventData.y, eventData.z];
-      _check = posibleCrash;
-    });
-  }
-
-  Future<void> _sendData() async {
-    List list = await retrieveData();
-    print('Se ha detectado una actividad muy brusca en en los acelerometros');
-    print(
-        'Los datos recolectados son con los sensores ($_accelerometerValuesCrash):');
-    print('lat: ' + list.elementAt(0).toString());
-    print('long: ' + list.elementAt(1).toString());
-    print('date: ' + list.elementAt(2).toString());
-    Fluttertoast.showToast(
-      msg: "Se ha detectado un accidente",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-    _check = false;
-    _accStream = accelerometerEvents.listen(
-      (AccelerometerEvent event) {
-        getInformationAcelerometer(event);
+    setState(
+      () {
+        _accelerometerValues = <double>[
+          eventData.x,
+          eventData.y,
+          eventData.z,
+        ];
       },
     );
+  }
+
+  void _sendData() async {
+    var nowTime = DateTime.now().millisecondsSinceEpoch;
+    if (nowTime - lastEvent <= 50) {
+      lastEvent = nowTime;
+      //List list = await retrieveData();
+      print(
+          'Los datos recolectados son con los sensores ($_accelerometerValuesCrash):');
+
+      List listTemp = await detectedCrash(false, context);
+      /*
+    var connection = PostgreSQLConnection("localhost", 5432, "demo",
+        username: "postgres", password: "raul1998");
+    await connection.open();
+    
+      Map data = {
+        'param_busqueda': listTemp.first.toString(),
+      };
+      try {
+        var response = await http
+            .get(Uri.parse('http://localhost:5000/api/description?eventid=1'));
+        print('object');
+      } catch (e) {
+        print('object2');
+        print(e);
+      }
+      */
+      await Future.delayed(
+        const Duration(
+          seconds: 2,
+        ),
+        () {
+          _accStream = accelerometerEvents.listen(
+            (AccelerometerEvent event) {
+              getInformationAcelerometer(event);
+            },
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -79,15 +100,35 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
   Widget build(BuildContext context) {
     final accelerometer =
         _accelerometerValues.map((double v) => v.toStringAsFixed(1)).toList();
-    final flag = _check;
-    if (flag) {
-      _sendData();
-    }
     return Sizer(
       builder: (context, orientation, deviceType) {
         return Center(
           child: Column(
             children: [
+              Text(
+                'Fuerza necesaria: $maxForce',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+                child: Slider(
+                  onChanged: (newval) {
+                    setState(
+                      () {
+                        maxForce = newval;
+                      },
+                    );
+                  },
+                  min: 10,
+                  max: 100,
+                  divisions: 9,
+                  value: maxForce,
+                  label: maxForce.toString(),
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,7 +141,13 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
                         return 'x: ' + accelerometer.elementAt(0);
                       }
                     }(),
-                    style: TextStyle(fontSize: 12.sp),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Color(
+                        0xff3c6e71,
+                      ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(width: 2.w),
                   Text(
@@ -111,7 +158,13 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
                         return 'y: ' + accelerometer.elementAt(1);
                       }
                     }(),
-                    style: TextStyle(fontSize: 12.sp),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Color(
+                        0xff3c6e71,
+                      ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(width: 2.w),
                   Text(
@@ -122,9 +175,19 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
                         return 'z: ' + accelerometer.elementAt(2);
                       }
                     }(),
-                    style: TextStyle(fontSize: 12.sp),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Color(
+                        0xff3c6e71,
+                      ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
+              ),
+              ElevatedButton(
+                onPressed: _sendData,
+                child: Text('prueba'),
               ),
             ],
           ),

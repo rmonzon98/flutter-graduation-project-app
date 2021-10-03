@@ -20,6 +20,9 @@ dependencies:
   syncfusion_flutter_gauges: ^19.2.57
   shared_preferences: any
   fluttertoast: ^8.0.8
+  http: ^0.13.3
+  postgres: ^2.4.1+2
+  intl: any
 
 dev_dependencies:
   flutter_test:

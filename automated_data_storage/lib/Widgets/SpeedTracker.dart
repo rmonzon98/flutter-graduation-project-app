@@ -14,13 +14,13 @@ class SpeedTracker extends StatefulWidget {
 
 class _SpeedTrackerState extends State<SpeedTracker> {
   // Velocidad pivote
-  double _pivotVelocity = 0.4;
+  double _pivotVelocity = 20;
 
 // Velocidad más baja a la que debe llegar para que se tome como incidente
-  double _lowestVelocity = 0.3;
+  double _lowestVelocity = 5;
 
   // Tiempo que debe pasar para que llegue a 0 para que se tome como incidente
-  double _pivotTime = 10;
+  double _pivotTime = 3;
 
   // Velocidad actual en m/s
   double _velocity = 0;
@@ -56,21 +56,26 @@ class _SpeedTrackerState extends State<SpeedTracker> {
         _velocity = (speed + updatedPosition.speed) / 2; // Se calcula velocidad
         //Se actualiza la velocidad actual
         _velocityUpdatedStreamController.add(_velocity);
-        if (_pivotVelocity < mpstokmph(_velocity)) {
+        if (mpstokmph(_velocity) >= _pivotVelocity) {
           _dateNowM = DateTime.now().millisecondsSinceEpoch;
+          _flagSpeed = true;
         }
-        if (_dateNow - _dateNowM > 0 &&
-            _dateNow - _dateNowM < (_pivotTime * 1000) &&
-            mpstokmph(_velocity) < _lowestVelocity) {
-          _flagCrash = true;
-          velocityCrash();
-          _speedStream.pause(
-            Future.delayed(
-              const Duration(seconds: 3),
-            ),
-          );
-        } else {
-          _flagCrash = false;
+        if (_flagSpeed) {
+          if (_dateNow - _dateNowM <= (_pivotTime * 1000) &&
+              mpstokmph(_velocity) <= _lowestVelocity) {
+            _flagCrash = true;
+            detectedCrash(true, context);
+            _speedStream.pause(
+              Future.delayed(
+                const Duration(seconds: 3),
+              ),
+            );
+          } else {
+            _flagCrash = false;
+          }
+        }
+        if (mpstokmph(_velocity) <= _lowestVelocity) {
+          _flagSpeed = false;
         }
       },
     );
@@ -108,6 +113,81 @@ class _SpeedTrackerState extends State<SpeedTracker> {
     return Sizer(builder: (context, orientation, deviceType) {
       return Column(
         children: [
+          Text(
+            'Intervalo de tiempo: $_pivotTime s',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+            child: Slider(
+              onChanged: (newval) {
+                setState(
+                  () {
+                    _pivotTime = newval;
+                  },
+                );
+              },
+              min: 0,
+              max: 10,
+              divisions: 10,
+              value: _pivotTime,
+              label: _pivotTime.toString(),
+            ),
+          ),
+          Text(
+            'Velocidad minima: $_lowestVelocity Km/h',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+            child: Slider(
+              onChanged: (newval) {
+                setState(
+                  () {
+                    _lowestVelocity = newval;
+                  },
+                );
+              },
+              min: 0,
+              max: 20,
+              divisions: 4,
+              value: _lowestVelocity,
+              label: _lowestVelocity.toString(),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Velocidad maxima: $_pivotTime Km/h',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+            child: Slider(
+              onChanged: (newval) {
+                setState(
+                  () {
+                    _pivotVelocity = newval;
+                  },
+                );
+              },
+              min: 20,
+              max: 50,
+              divisions: 6,
+              value: _pivotVelocity,
+              label: _pivotVelocity.toString(),
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -119,10 +199,18 @@ class _SpeedTrackerState extends State<SpeedTracker> {
                     velocity: mpstokmph(_velocity),
                     dateNow: _dateNow,
                     flagCrash: _flagCrash,
+                    minVel: _lowestVelocity,
+                    maxVel: _pivotVelocity,
                   );
                 },
               ),
             ],
+          ),
+          ElevatedButton(
+            onPressed: () {
+              detectedCrash(true, context);
+            },
+            child: Text('Prueba'),
           ),
         ],
       );
