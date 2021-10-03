@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sizer/sizer.dart';
 import 'package:automated_data_storage/Providers/DataSender.dart';
@@ -16,7 +15,6 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
   double maxForce = 40.0; // Valor máximo permitido en todos los ejes
   late StreamSubscription _accStream;
   List<double> _accelerometerValues = [0, 0, 0];
-  List<double> _accelerometerValuesCrash = [0, 0, 0];
   var lastEvent;
 
   void getInformationAcelerometer(eventData) {
@@ -26,7 +24,6 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
         eventData.z > maxForce) {
       _accStream.cancel();
       _sendData();
-      _accelerometerValuesCrash = [eventData.x, eventData.y, eventData.z];
     }
     setState(
       () {
@@ -44,10 +41,9 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
     if (nowTime - lastEvent <= 50) {
       lastEvent = nowTime;
       //List list = await retrieveData();
-      print(
-          'Los datos recolectados son con los sensores ($_accelerometerValuesCrash):');
 
       List listTemp = await detectedCrash(false, context);
+      print(listTemp);
       /*
     var connection = PostgreSQLConnection("localhost", 5432, "demo",
         username: "postgres", password: "raul1998");
