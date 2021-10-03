@@ -165,7 +165,7 @@ class _SpeedTrackerState extends State<SpeedTracker> {
             height: 20,
           ),
           Text(
-            'Velocidad maxima: $_pivotTime Km/h',
+            'Velocidad maxima: $_pivotVelocity Km/h',
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
