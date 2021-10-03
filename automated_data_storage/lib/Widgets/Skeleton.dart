@@ -37,29 +37,33 @@ class _HomeSkeletonState extends State<HomeSkeleton> {
       builder: (context, orientation, deviceType) {
         return Scaffold(
           backgroundColor: Color(0xff353535),
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          body: ListView(
             children: [
-              Text(
-                'Automatización de almacenamiento\nde datos',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Color(
-                    0xff3c6e71,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Automatización de almacenamiento\nde datos',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Color(
+                        0xff3c6e71,
+                      ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  fontWeight: FontWeight.bold,
-                ),
+                  SizedBox(
+                    height: 5.h,
+                  ),
+                  SpeedTracker(),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  AccelerometerTracker(),
+                ],
               ),
-              SizedBox(
-                height: 5.h,
-              ),
-              SpeedTracker(),
-              SizedBox(
-                height: 2.h,
-              ),
-              AccelerometerTracker(),
             ],
           ),
         );

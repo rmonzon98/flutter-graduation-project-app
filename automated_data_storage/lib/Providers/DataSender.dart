@@ -46,7 +46,7 @@ Future detectedCrash(bool tipo, var context) async {
               : 'Se ha detectado un posible accidente con acelerometros',
         ),
         content: Text(
-          'Se ha detectado un posible accidente en el segundo en las coordenadas' +
+          'Se ha detectado un posible accidente en las coordenadas' +
               lat.toString() +
               ', ' +
               long.toString() +
