@@ -9,7 +9,6 @@ DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
 
 Future saveLocally() async {
   final prefs = await SharedPreferences.getInstance();
-  print(prefs.getString('info') ?? ' ');
   var position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.bestForNavigation);
   var lat = position.latitude;
@@ -32,10 +31,28 @@ Future saveLocally() async {
 Future detectedCrash(bool tipo, var context) async {
   var position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.bestForNavigation);
-  var lat = position.latitude;
-  var long = position.longitude;
+  String lat = position.latitude.toString();
+  String long = position.longitude.toString();
   DateTime dateTime = DateTime.now();
   String nowTime = dateFormat.format(dateTime);
+  /*
+  print("Conexión");
+  var connection = PostgreSQLConnection("35.193.64.94", 5432, "moduloraul",
+      username: "postgres", password: "julius");
+  print("Conexión abierta");
+  await connection.open();
+  print("Conexión query");
+  await connection.query(
+    "INSERT INTO possibleaccidents (latitud, longitud, datetime) VALUES (@la, @lo, @t)",
+    substitutionValues: {
+      "la": lat,
+      "lo": long,
+      "t": nowTime,
+    },
+  );
+  print("Conexión cierre");
+  await connection.close();
+  print("Conexión cerrada exitosamente");*/
   showDialog(
     context: context,
     builder: (context) {
@@ -47,9 +64,9 @@ Future detectedCrash(bool tipo, var context) async {
         ),
         content: Text(
           'Se ha detectado un posible accidente en las coordenadas' +
-              lat.toString() +
+              lat +
               ', ' +
-              long.toString() +
+              long +
               ' al rededor de las ' +
               nowTime,
         ),
@@ -64,11 +81,4 @@ Future detectedCrash(bool tipo, var context) async {
       );
     },
   );
-  return [lat.toString(), long.toString(), nowTime];
-}
-
-void sendData() async {
-  var connection = PostgreSQLConnection("localhost", 5432, "demo",
-      username: "postgres", password: "raul1998");
-  await connection.open();
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:automated_data_storage/Providers/DataSender.dart';
 import 'package:automated_data_storage/Widgets/AccelerometerTracker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import 'SpeedTracker.dart';
 
@@ -33,6 +34,12 @@ class _HomeSkeletonState extends State<HomeSkeleton> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+      [
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.portraitUp,
+      ],
+    );
     return Sizer(
       builder: (context, orientation, deviceType) {
         return Scaffold(
@@ -43,6 +50,9 @@ class _HomeSkeletonState extends State<HomeSkeleton> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   Text(
                     'Automatización de almacenamiento\nde datos',
                     textAlign: TextAlign.center,
@@ -62,6 +72,9 @@ class _HomeSkeletonState extends State<HomeSkeleton> {
                     height: 2.h,
                   ),
                   AccelerometerTracker(),
+                  SizedBox(
+                    height: 20.h,
+                  )
                 ],
               ),
             ],

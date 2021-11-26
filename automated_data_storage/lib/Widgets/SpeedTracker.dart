@@ -121,7 +121,7 @@ class _SpeedTrackerState extends State<SpeedTracker> {
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+            padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
             child: Slider(
               onChanged: (newval) {
                 setState(
@@ -145,7 +145,7 @@ class _SpeedTrackerState extends State<SpeedTracker> {
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+            padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
             child: Slider(
               onChanged: (newval) {
                 setState(
@@ -172,7 +172,7 @@ class _SpeedTrackerState extends State<SpeedTracker> {
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+            padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
             child: Slider(
               onChanged: (newval) {
                 setState(
@@ -205,12 +205,6 @@ class _SpeedTrackerState extends State<SpeedTracker> {
                 },
               ),
             ],
-          ),
-          ElevatedButton(
-            onPressed: () {
-              detectedCrash(true, context);
-            },
-            child: Text('Prueba'),
           ),
         ],
       );

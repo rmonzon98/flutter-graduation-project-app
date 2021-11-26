@@ -40,30 +40,10 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
     var nowTime = DateTime.now().millisecondsSinceEpoch;
     if (nowTime - lastEvent <= 50) {
       lastEvent = nowTime;
-      //List list = await retrieveData();
-
-      List listTemp = await detectedCrash(false, context);
-      print(listTemp);
-      /*
-    var connection = PostgreSQLConnection("localhost", 5432, "demo",
-        username: "postgres", password: "raul1998");
-    await connection.open();
-    
-      Map data = {
-        'param_busqueda': listTemp.first.toString(),
-      };
-      try {
-        var response = await http
-            .get(Uri.parse('http://localhost:5000/api/description?eventid=1'));
-        print('object');
-      } catch (e) {
-        print('object2');
-        print(e);
-      }
-      */
+      await detectedCrash(false, context);
       await Future.delayed(
         const Duration(
-          seconds: 2,
+          seconds: 3,
         ),
         () {
           _accStream = accelerometerEvents.listen(
@@ -102,14 +82,14 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
           child: Column(
             children: [
               Text(
-                'Fuerza necesaria: $maxForce',
+                'Aceleración necesaria: $maxForce',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                 ),
               ),
               Container(
-                padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+                padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
                 child: Slider(
                   onChanged: (newval) {
                     setState(
@@ -180,10 +160,6 @@ class _AccelerometerTrackerState extends State<AccelerometerTracker> {
                     ),
                   ),
                 ],
-              ),
-              ElevatedButton(
-                onPressed: _sendData,
-                child: Text('prueba'),
               ),
             ],
           ),
