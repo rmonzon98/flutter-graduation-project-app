@@ -35,8 +35,7 @@ Future detectedCrash(bool tipo, var context) async {
   String long = position.longitude.toString();
   DateTime dateTime = DateTime.now();
   String nowTime = dateFormat.format(dateTime);
-  /*
-  print("Conexión");
+  /*print("Conexión");
   var connection = PostgreSQLConnection("35.193.64.94", 5432, "moduloraul",
       username: "postgres", password: "julius");
   print("Conexión abierta");

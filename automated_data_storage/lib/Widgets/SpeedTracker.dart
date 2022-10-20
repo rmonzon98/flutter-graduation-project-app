@@ -110,104 +110,106 @@ class _SpeedTrackerState extends State<SpeedTracker> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return Column(
-        children: [
-          Text(
-            'Intervalo de tiempo: $_pivotTime s',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return Column(
+          children: [
+            Text(
+              'Intervalo de tiempo: $_pivotTime s',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
-            child: Slider(
-              onChanged: (newval) {
-                setState(
-                  () {
-                    _pivotTime = newval;
-                  },
-                );
-              },
-              min: 0,
-              max: 10,
-              divisions: 10,
-              value: _pivotTime,
-              label: _pivotTime.toString(),
-            ),
-          ),
-          Text(
-            'Velocidad minima: $_lowestVelocity Km/h',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
-            child: Slider(
-              onChanged: (newval) {
-                setState(
-                  () {
-                    _lowestVelocity = newval;
-                  },
-                );
-              },
-              min: 0,
-              max: 20,
-              divisions: 4,
-              value: _lowestVelocity,
-              label: _lowestVelocity.toString(),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            'Velocidad maxima: $_pivotVelocity Km/h',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
-            child: Slider(
-              onChanged: (newval) {
-                setState(
-                  () {
-                    _pivotVelocity = newval;
-                  },
-                );
-              },
-              min: 20,
-              max: 50,
-              divisions: 6,
-              value: _pivotVelocity,
-              label: _pivotVelocity.toString(),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              StreamBuilder(
-                stream: _velocityUpdatedStreamController.stream,
-                builder: (context, snapshot) {
-                  return SpeedUI(
-                    velocity: mpstokmph(_velocity),
-                    dateNow: _dateNow,
-                    flagCrash: _flagCrash,
-                    minVel: _lowestVelocity,
-                    maxVel: _pivotVelocity,
+            Container(
+              padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+              child: Slider(
+                onChanged: (newval) {
+                  setState(
+                    () {
+                      _pivotTime = newval;
+                    },
                   );
                 },
+                min: 0,
+                max: 10,
+                divisions: 10,
+                value: _pivotTime,
+                label: _pivotTime.toString(),
               ),
-            ],
-          ),
-        ],
-      );
-    });
+            ),
+            Text(
+              'Velocidad minima: $_lowestVelocity Km/h',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+              child: Slider(
+                onChanged: (newval) {
+                  setState(
+                    () {
+                      _lowestVelocity = newval;
+                    },
+                  );
+                },
+                min: 0,
+                max: 20,
+                divisions: 4,
+                value: _lowestVelocity,
+                label: _lowestVelocity.toString(),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              'Velocidad maxima: $_pivotVelocity Km/h',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+              child: Slider(
+                onChanged: (newval) {
+                  setState(
+                    () {
+                      _pivotVelocity = newval;
+                    },
+                  );
+                },
+                min: 20,
+                max: 70,
+                divisions: 8,
+                value: _pivotVelocity,
+                label: _pivotVelocity.toString(),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                StreamBuilder(
+                  stream: _velocityUpdatedStreamController.stream,
+                  builder: (context, snapshot) {
+                    return SpeedUI(
+                      velocity: mpstokmph(_velocity),
+                      dateNow: _dateNow,
+                      flagCrash: _flagCrash,
+                      minVel: _lowestVelocity,
+                      maxVel: _pivotVelocity,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 }
